@@ -10,6 +10,11 @@ This fork also passes images through an optimizer to reduce their sizes drastica
 
 It also tweaks the EPUB template to display full-page images as best it can
 
+## INSTALL FOR THE FORKED VERSION:
+- Clone,
+- `cd` into Dir,
+- `gem install /full/path/to/your.gem`
+
 ## Installation
 
 In order to use it, make sure you have unrar installed in your system. You can do it via homebrew:
