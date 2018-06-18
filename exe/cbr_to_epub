@@ -7,6 +7,10 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = 'Usage: cbr_to_epub [options]'
 
+  opts.on('--inputs=*.FILES', Array, 'Glob of Input CBR files to be converted') do |inputs|
+    options[:inputs] = Dir.glob(inputs).sort
+  end
+
   opts.on('-i', '--input FILE', 'Input CBR file to be converted') do |input|
     options[:input] = input
   end
@@ -24,9 +28,25 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-raise 'No input file specified' unless options[:input]
+raise 'No input file specified' unless options[:input] or options[:inputs]
 
-metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])
 
-converter = CbrToEpub::Converter.new(options[:input], options[:output] || (options[:input] + '.epub'), metadata)
-converter.convert
+if options[:inputs]
+  puts "Starting Processing of #{options[:inputs]}"
+  options[:inputs].each do |input|
+    puts ">>>>>>>>>>>>>>>>>>>"
+    puts "Processing #{input}"
+    CbrToEpub::Converter.new(
+      input,
+      input.gsub(/\.cb[rz]$/, ".epub"),
+      CbrToEpub::Output::Content::Metadata.new(
+        options[:author],
+        options[:title] || File.basename(input).split('.').first
+      )
+    ).convert
+  end
+else
+  metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])
+  converter = CbrToEpub::Converter.new(options[:input], options[:output] || (options[:input] + '.epub'), metadata)
+  converter.convert
+end

@@ -5,6 +5,9 @@ This may come in handy if you want to be able to read them on your iPad.
 
 The tool has been written for and tested on macOS, so if you want to use it on other platforms you'll need to port Input::CbrExtractor and Output::EpubCompressor classes, as they rely on shell utilities for macOS system.
 
+## FORK INFO: 
+This fork also passes images through an optimizer to reduce their sizes drastically (4-5x) with minimal visible loss in quality.
+
 ## Installation
 
 In order to use it, make sure you have unrar installed in your system. You can do it via homebrew:

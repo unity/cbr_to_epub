@@ -3,6 +3,7 @@ require_relative 'input/extractor_factory'
 require_relative 'output/content/data'
 require_relative 'output/content/metadata'
 require_relative 'output/epub_builder'
+require_relative 'output/image_compressor'
 require_relative 'output/epub_compressor'
 
 module CbrToEpub
@@ -19,6 +20,8 @@ module CbrToEpub
       extractor = Input::ExtractorFactory.new(file_manager).for_file(input_path)
       input_image_files = extractor.extract
 
+      image_compressor = Output::ImageCompressor.new(input_image_files)
+      image_compressor.compress_images
       epub_builder = Output::EpubBuilder.new(file_manager, Output::Content::Data.new(metadata, input_image_files))
       epub_builder.generate_metadata
       epub_builder.generate_pages
