@@ -8,6 +8,8 @@ The tool has been written for and tested on macOS, so if you want to use it on o
 ## FORK INFO: 
 This fork also passes images through an optimizer to reduce their sizes drastically (4-5x) with minimal visible loss in quality.
 
+It also tweaks the EPUB template to display full-page images as best it can
+
 ## Installation
 
 In order to use it, make sure you have unrar installed in your system. You can do it via homebrew:
