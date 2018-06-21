@@ -15,6 +15,10 @@ It also tweaks the EPUB template to display full-page images as best it can
 - `cd` into Dir,
 - `gem install /full/path/to/your.gem`
 
+## BUILD GEM
+
+- `gem build cbr_to_epub.gemspec`
+
 ## Installation
 
 In order to use it, make sure you have unrar installed in your system. You can do it via homebrew:
@@ -42,4 +46,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/rafalc
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
