@@ -39,6 +39,12 @@ You can also specify author and title for metadata that will be embedded in the 
 
 Use `-o` option if you want to specify output file manually.
 
+## Batch Usage
+
+`cbr_to_epub --inputs=*.cbr [--output=/destination/dir]`
+
+converts all matching cbr and cbz to output, or their current directory
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/rafalcymerys/cbr_to_epub.

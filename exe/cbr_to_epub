@@ -15,7 +15,7 @@ OptionParser.new do |opts|
     options[:input] = input
   end
 
-  opts.on('-o', '--output FILE', 'Output EPUB file that will be created') do |output|
+  opts.on('-o', '--output FILE', 'Output EPUB file that will be created, or a valid directory if --inputs has been used') do |output|
     options[:output] = output
   end
 
@@ -34,11 +34,16 @@ raise 'No input file specified' unless options[:input] or options[:inputs]
 if options[:inputs]
   puts "Starting Processing of #{options[:inputs]}"
   options[:inputs].each do |input|
+    puts options[:output]
+    out_file = File.basename(input.gsub(/\.cb[rz]$/, ".epub"))
+    out_dir =  File.expand_path(options[:output] || File.dirname(input))
+    output = File.join(out_dir, out_file)
     puts ">>>>>>>>>>>>>>>>>>>"
-    puts "Processing #{input}"
+    puts "Processing #{input} to #{output}"
+    puts ">>>>>>>>>>>>>>>>>>>"
     CbrToEpub::Converter.new(
       input,
-      input.gsub(/\.cb[rz]$/, ".epub"),
+      output,
       CbrToEpub::Output::Content::Metadata.new(
         options[:author],
         options[:title] || File.basename(input).split('.').first
