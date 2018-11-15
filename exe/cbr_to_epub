@@ -23,6 +23,10 @@ OptionParser.new do |opts|
     options[:author] = author
   end
 
+  opts.on('-d', '--delete', 'Delete Source Files') do |delete|
+    options[:delete] = delete
+  end
+
   opts.on('-t', '--title [TITLE]', 'Add title to metadata') do |title|
     options[:title] = title
   end
@@ -49,6 +53,12 @@ if options[:inputs]
         options[:title] || File.basename(input).split('.').first
       )
     ).convert
+    if (options[:delete] === true)
+      puts ">>>>>>>>>>>>>>>>>>>"
+      puts "Deleting #{input}"
+      puts ">>>>>>>>>>>>>>>>>>>"
+      FileUtils.rm_rf(input)
+    end
   end
 else
   metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])
