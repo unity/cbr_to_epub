@@ -23,7 +23,8 @@ It also tweaks the EPUB template to display full-page images as best it can
 
 In order to use it, make sure you have a few tools installed in your system. You can do it via homebrew:
 
-`brew install unrar imagemagick`
+`brew install unrar imagemagick advancecomp gifsicle jhead jpegoptim jpeg optipng pngcrush pngquant jonof/kenutils/pngout`
+
 
 Then install some gems (for pngout support):
 `gem install image_optim image_optim_pack`
