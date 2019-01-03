@@ -21,12 +21,14 @@ It also tweaks the EPUB template to display full-page images as best it can
 
 ## Installation
 
-In order to use it, make sure you have unrar installed in your system. You can do it via homebrew:
+In order to use it, make sure you have a few tools installed in your system. You can do it via homebrew:
 
-`brew install unrar`
+`brew install unrar imagemagick`
 
-Then install the gem:
+Then install some gems (for pngout support):
+`gem install image_optim image_optim_pack`
 
+And finally the `cbr_to_epub` gem
 `gem install cbr_to_epub`
 
 ## Usage
