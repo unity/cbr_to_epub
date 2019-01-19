@@ -1,7 +1,7 @@
-#!/usr/bin/ruby
+#!/usr/local/bin/ruby
 
 require 'optparse'
-require_relative '../lib/cbr_to_epub'
+require_relative 'lib/cbr_to_epub'
 
 options = {}
 OptionParser.new do |opts|
@@ -38,13 +38,18 @@ end.parse!
 
 raise 'No input file specified' unless options[:input] or options[:inputs] or options[:watch]
 
+puts "Starting with options"
+puts options
+
 if options[:inputs]
   puts ">>>>>>>>>>>>>>>>>>> Starting Processing of #{options[:inputs]}"
   options[:inputs].each do |input|
     convert(input, options[:output], options[:author], options[:title], options[:delete])
   end
 elsif options[:watch]
-  CbrToEpub::Watcher.new(options[:input], options[:output], options[:delete])
+  CbrToEpub::Watcher.new(options[:watch], options[:output], options[:delete])
+  puts "Listening to changes on #{options[:watch]}"
+  puts "Outputting to #{options[:output]}"
   sleep
 else
   metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])

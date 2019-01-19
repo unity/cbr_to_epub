@@ -10,6 +10,7 @@ module CbrToEpub
         @image_optim = ImageOptim.new(
           :svgo => false,
           :allow_lossy => true,
+          :pngout => false,
           :jpegoptim => {
             :allow_lossy => true,
             :strip => 'all'
@@ -23,7 +24,7 @@ module CbrToEpub
 
       def compress_images
         Parallel.each_with_index(@input_image_files, in_processes: 4, progress: "Compressing Images") { |image_file|
-          system("magick mogrify -resize 2048x2048 \"#{image_file}\"")
+          system("mogrify -resize 2048x2048 \"#{image_file}\"")
           @image_optim.optimize_image!(image_file)
         }
       end
