@@ -42,6 +42,8 @@ You can also specify author and title for metadata that will be embedded in the 
 
 Use `-o` option if you want to specify output file manually.
 
+Use `-w` to watch for changes in the input folder and perform transform on changes
+
 ## Batch Usage
 
 `cbr_to_epub --inputs=*.cbr [--output=/destination/dir]`

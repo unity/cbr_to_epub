@@ -11,6 +11,10 @@ OptionParser.new do |opts|
     options[:inputs] = Dir.glob(inputs).sort
   end
 
+  opts.on('-w', '--watch FOLDER', 'Watch for directory') do |watch|
+    options[:watch] = watch
+  end
+
   opts.on('-i', '--input FILE', 'Input CBR file to be converted') do |input|
     options[:input] = input
   end
@@ -32,36 +36,37 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-raise 'No input file specified' unless options[:input] or options[:inputs]
-
+raise 'No input file specified' unless options[:input] or options[:inputs] or options[:watch]
 
 if options[:inputs]
-  puts "Starting Processing of #{options[:inputs]}"
+  puts ">>>>>>>>>>>>>>>>>>> Starting Processing of #{options[:inputs]}"
   options[:inputs].each do |input|
-    puts options[:output]
-    out_file = File.basename(input.gsub(/\.cb[rz]$/, ".epub"))
-    out_dir =  File.expand_path(options[:output] || File.dirname(input))
-    output = File.join(out_dir, out_file)
-    puts ">>>>>>>>>>>>>>>>>>>"
-    puts "Processing #{input} to #{output}"
-    puts ">>>>>>>>>>>>>>>>>>>"
-    CbrToEpub::Converter.new(
-      input,
-      output,
-      CbrToEpub::Output::Content::Metadata.new(
-        options[:author],
-        options[:title] || File.basename(input).split('.').first
-      )
-    ).convert
-    if (options[:delete] === true)
-      puts ">>>>>>>>>>>>>>>>>>>"
-      puts "Deleting #{input}"
-      puts ">>>>>>>>>>>>>>>>>>>"
-      FileUtils.rm_rf(input)
-    end
+    convert(input, options[:output], options[:author], options[:title], options[:delete])
   end
+elsif options[:watch]
+  CbrToEpub::Watcher.new(options[:input], options[:output], options[:delete])
+  sleep
 else
   metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])
   converter = CbrToEpub::Converter.new(options[:input], options[:output] || (options[:input] + '.epub'), metadata)
   converter.convert
+end
+
+def convert input, output_folder, author, title
+  output = CbrToEpub::Output.new(output_folder).for(input)
+  puts ">>>>>>>>>>>>>>>>>>> Processing #{input} to #{output}"
+  CbrToEpub::Converter.new(
+    input,
+    output,
+    CbrToEpub::Output::Content::Metadata.new(
+      author,
+      title || File.basename(input).split('.').first
+    )
+  ).convert
+  delete(input) if (options[:delete] === true)
+end
+
+def delete input
+  puts ">>>>>>>>>>>>>>>>>>> Deleting #{input}"
+  FileUtils.rm_rf(input)
 end
