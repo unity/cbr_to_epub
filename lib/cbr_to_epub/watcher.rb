@@ -1,34 +1,55 @@
 require 'listen'
+require_relative "output/folder"
 
 module CbrToEpub
   class Watcher
     def initialize(input, output, delete)
       @input_path = input
-      @output = CbrToEpub::Output.new(output)
+      @output = CbrToEpub::Output::Folder.new(output)
       @delete_files = delete
       @queue = []
-      @listener.start
-    end
-    def listener
-      Listen.to(input) do |added, modified|
-        if(added.count)
-          puts "Added File(s) #{added}"
-          @queue.concat(added)
-        end
-        if(modified.count)
-          puts "Modified File(s) #{modified}"
-          @queue.concat(added)
-        end
-      end
+      listener(@input_path)
+      process
     end
 
-    def delete input
+    private
+
+    def listener input
+      puts "----------"
+      puts "Watching folder #{input}"
+      puts "----------"
+      @_listener ||= Listen.to(input) do |added, modified|
+        if(added.count)
+          push(added)
+        end
+        if(modified.count)
+          push(modified)
+        end
+      end
+      @_listener.start()
+      @_listener
+    end
+
+    def trash input
       puts ">>>>>>>>>>>>>>>>>>> Deleting #{input}"
       FileUtils.rm_rf(input)
     end
 
+    def push files
+      files.each do |file|
+        extname = File.extname(file).downcase
+        if extname === ".cbr" or extname === ".cbz"
+          puts "Adding File #{file} to #{@queue}"
+          @queue.push(file)
+          process unless @processing
+        end
+      end
+    end
+
     def process
-      while (@queue.count)
+      while (@queue.count > 0)
+        puts "#{@queue.count} #{@queue}"
+        @processing = true
         input = @queue.shift
         output = @output.for(input)
         puts ">>>>>>>>>>>>>>>>>>> Processing #{input} to #{output}"
@@ -36,12 +57,12 @@ module CbrToEpub
           input,
           output,
           CbrToEpub::Output::Content::Metadata.new(
-            author,
+            nil,
             File.basename(input).split('.').first
           )
         ).convert
-        @delete(input) if (@delete_files === true)
       end
+      @processing = false
     end
   end
 end
