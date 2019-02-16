@@ -11,19 +11,23 @@ OptionParser.new do |opts|
     options[:inputs] = Dir.glob(inputs).sort
   end
 
-  opts.on('-w', '--watch FOLDER', 'Watch for directory') do |watch|
+  opts.on('-w', '--watch=FOLDER', 'Watch for directory') do |watch|
     options[:watch] = watch
   end
 
-  opts.on('-i', '--input FILE', 'Input CBR file to be converted') do |input|
+  opts.on('-i', '--input=FILE', 'Input CBR file to be converted') do |input|
     options[:input] = input
   end
 
-  opts.on('-o', '--output FILE', 'Output EPUB file that will be created, or a valid directory if --inputs has been used') do |output|
+  opts.on('-o', '--output=FILE_OR_FOLDER', 'Output EPUB file that will be created, or a valid directory if --inputs has been used') do |output|
     options[:output] = output
   end
 
-  opts.on('-a', '--author [AUTHOR]', 'Add author to metadata') do |author|
+  opts.on('-d', '--done=FOLDER', 'Output CBR directory if --inputs has been used') do |done|
+   options[:done] = done
+  end
+
+  opts.on('-a', '--author=[AUTHOR]', 'Add author to metadata') do |author|
     options[:author] = author
   end
 
@@ -47,9 +51,10 @@ if options[:inputs]
     convert(input, options[:output], options[:author], options[:title], options[:delete])
   end
 elsif options[:watch]
-  CbrToEpub::Watcher.new(options[:watch], options[:output], options[:delete])
+  CbrToEpub::Watcher.new(options[:watch], options[:output], options[:done], options[:delete])
   puts "Listening to changes on #{options[:watch]}"
   puts "Outputting to #{options[:output]}"
+  puts "Moving files to #{options[:done]}"
   sleep
 else
   metadata = CbrToEpub::Output::Content::Metadata.new(options[:author], options[:title])
@@ -69,6 +74,7 @@ def convert input, output_folder, author, title
     )
   ).convert
   delete(input) if (options[:delete] === true)
+  FileUtils.mv input, options[:done] if options[:done] and not options[:delete] === true
 end
 
 def delete input

@@ -3,10 +3,11 @@ require_relative "output/folder"
 
 module CbrToEpub
   class Watcher
-    def initialize(input, output, delete)
+    def initialize(input, output, donedir, delete)
       @input_path = input
       @output = CbrToEpub::Output::Folder.new(output)
       @delete_files = delete
+      @donedir = donedir
       @queue = []
       listener(@input_path)
       process
@@ -46,6 +47,11 @@ module CbrToEpub
       end
     end
 
+    def move input, output
+      puts ">>>>>>>>>>> Moving #{input} to #{output}" if Dir.exists? output
+      FileUtils.mv(input, output) unless output.nil? or not Dir.exists?(output) or File.exists?("#{output}/#{input}")
+    end
+
     def process
       while (@queue.count > 0)
         puts "#{@queue.count} #{@queue}"
@@ -61,6 +67,7 @@ module CbrToEpub
             File.basename(input).split('.').first
           )
         ).convert
+        move(input, @donedir) if @donedir
       end
       @processing = false
     end

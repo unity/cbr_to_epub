@@ -21,10 +21,11 @@ ENV TERM="xterm" \
     GEM_HOME="/usr/local/bundle" \
     PATH=$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH \
     INPUTDIR=/input \
-    OUTPUTDIR=/output
+    OUTPUTDIR=/output \
+    DONEDIR=/done
 
-RUN mkdir -p $INPUTDIR $OUTPUTDIR
-VOLUME $INPUTDIR $OUTPUTDIR
+RUN mkdir -p $INPUTDIR $OUTPUTDIR $DONEDIR
+VOLUME $INPUTDIR $OUTPUTDIR $DONEDIR
 COPY Gemrc $HOME/.gemrc
 COPY cmd.sh entrypoint.sh /var/lib/
 
@@ -34,4 +35,4 @@ COPY cbr Gemfile Gemfile.lock cbr_to_epub.gemspec ./
 RUN bundle install
 
 ENTRYPOINT ["/var/lib/entrypoint.sh"]
-CMD /var/lib/cmd.sh $INPUTDIR $OUTPUTDIR
+CMD /var/lib/cmd.sh $INPUTDIR $OUTPUTDIR $DONEDIR
