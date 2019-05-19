@@ -19,7 +19,7 @@ module CbrToEpub
       puts "----------"
       puts "Watching folder #{input}"
       puts "----------"
-      @_listener ||= Listen.to(input) do |added, modified|
+      @_listener ||= Listen.to(input, :force_polling => true) do |added, modified|
         if(added.count)
           push(added)
         end
